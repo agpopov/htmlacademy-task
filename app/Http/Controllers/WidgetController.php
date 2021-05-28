@@ -8,13 +8,11 @@ use Intervention\Image\Facades\Image;
 
 class WidgetController extends Controller
 {
-    public function __invoke(WidgetRequest $request, string $userId)
+    public function __invoke(WidgetRequest $request, User $user)
     {
-        $score = User::active()->findOrFail($userId)->getAvgScore();
-
         $image = Image::canvas($request->width(), $request->height(), $request->backgroundColor());
         $image->text(
-            (int)round($score) . '%',
+            round($user->getAvgScore()) . '%',
             (int)floor($request->width() / 2),
             (int)floor($request->height() / 2),
             function ($font) use ($request) {

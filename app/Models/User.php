@@ -69,4 +69,9 @@ class User extends Authenticatable
     {
         return (float)$this->reviews()->published()->avg('score');
     }
+
+    public function resolveRouteBinding($value, $field = null): self
+    {
+        return $this->active()->findOrFail($value);
+    }
 }

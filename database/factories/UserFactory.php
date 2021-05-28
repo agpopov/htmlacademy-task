@@ -23,4 +23,37 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
         ];
     }
+
+    public function active(): self
+    {
+        return $this->state(
+            function (array $attributes) {
+                return [
+                    'status' => User::STATUS_ACTIVE,
+                ];
+            }
+        );
+    }
+
+    public function inactive(): self
+    {
+        return $this->state(
+            function (array $attributes) {
+                return [
+                    'status' => User::STATUS_INACTIVE,
+                ];
+            }
+        );
+    }
+
+    public function blocked(): self
+    {
+        return $this->state(
+            function (array $attributes) {
+                return [
+                    'status' => User::STATUS_BLOCKED,
+                ];
+            }
+        );
+    }
 }

@@ -14,7 +14,7 @@ class WidgetControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->hasReviews($this->faker->numberBetween(1, 100))->create(['status' => User::STATUS_ACTIVE]);
+        $this->user = User::factory()->active()->hasReviews($this->faker->numberBetween(1, 100))->create();
     }
 
     /**
@@ -24,7 +24,7 @@ class WidgetControllerTest extends TestCase
      */
     public function test_simple_ok()
     {
-        $response = $this->get(route('widget', ['userId' => $this->user->id]));
+        $response = $this->get(route('widget', ['user' => $this->user->id]));
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'image/png');
 
@@ -34,7 +34,7 @@ class WidgetControllerTest extends TestCase
 
     public function test_image_default_sizes()
     {
-        $response = $this->get(route('widget', ['userId' => $this->user->id]));
+        $response = $this->get(route('widget', ['user' => $this->user->id]));
 
         $response->assertStatus(200);
         $widget = Image::make($response->content());
@@ -47,7 +47,7 @@ class WidgetControllerTest extends TestCase
     {
         $width = $this->faker->numberBetween(100, 500);
         $height = $this->faker->numberBetween(100, 500);
-        $response = $this->get(route('widget', ['userId' => $this->user->id, 'width' => $width, 'height' => $height]));
+        $response = $this->get(route('widget', ['user' => $this->user->id, 'width' => $width, 'height' => $height]));
 
         $response->assertStatus(200);
         $widget = Image::make($response->content());
@@ -58,7 +58,7 @@ class WidgetControllerTest extends TestCase
 
     public function test_image_default_background_color()
     {
-        $response = $this->get(route('widget', ['userId' => $this->user->id]));
+        $response = $this->get(route('widget', ['user' => $this->user->id]));
 
         $response->assertStatus(200);
         $widget = Image::make($response->content());
@@ -69,7 +69,7 @@ class WidgetControllerTest extends TestCase
     public function test_image_custom_background_color()
     {
         $color = $this->faker->hexColor;
-        $response = $this->get(route('widget', ['userId' => $this->user->id, 'background_color' => Str::substr($color, 1)]));
+        $response = $this->get(route('widget', ['user' => $this->user->id, 'background_color' => Str::substr($color, 1)]));
 
         $response->assertStatus(200);
         $widget = Image::make($response->content());
@@ -79,7 +79,7 @@ class WidgetControllerTest extends TestCase
 
     public function test_image_default_text_color()
     {
-        $response = $this->get(route('widget', ['userId' => $this->user->id, 'width' => 500, 'height' => 500]));
+        $response = $this->get(route('widget', ['user' => $this->user->id, 'width' => 500, 'height' => 500]));
 
         $response->assertStatus(200);
         $widget = Image::make($response->content());
@@ -95,7 +95,7 @@ class WidgetControllerTest extends TestCase
     public function test_image_custom_text_color()
     {
         $color = $this->faker->hexColor;
-        $response = $this->get(route('widget', ['userId' => $this->user->id, 'text_color' => Str::substr($color, 1), 'width' => 500, 'height' => 500]));
+        $response = $this->get(route('widget', ['user' => $this->user->id, 'text_color' => Str::substr($color, 1), 'width' => 500, 'height' => 500]));
 
         $response->assertStatus(200);
         $widget = Image::make($response->content());
@@ -108,9 +108,16 @@ class WidgetControllerTest extends TestCase
         $this->assertContains($color, $colors);
     }
 
-    public function test_not_found_user()
+    public function test_not_found_fake_user()
     {
-        $response = $this->get(route('widget', ['userId' => $this->faker->uuid]));
+        $response = $this->get(route('widget', ['user' => $this->faker->uuid]));
+        $response->assertStatus(404);
+    }
+
+    public function test_not_found_inactive_user()
+    {
+        $user = User::factory()->inactive()->create();
+        $response = $this->get(route('widget', ['user' => $user->id]));
         $response->assertStatus(404);
     }
 
