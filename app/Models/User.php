@@ -64,4 +64,9 @@ class User extends Authenticatable
     {
         $builder->whereStatus(self::STATUS_ACTIVE);
     }
+
+    public function getAvgScore(): float
+    {
+        return (float)$this->reviews()->published()->avg('score');
+    }
 }

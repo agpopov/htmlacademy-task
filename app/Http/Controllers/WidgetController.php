@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\WidgetRequest;
-use App\Models\Review;
 use App\Models\User;
 use Intervention\Image\Facades\Image;
 
@@ -12,14 +11,13 @@ class WidgetController extends Controller
 
     public function __invoke(WidgetRequest $request, string $userId)
     {
-        $user = User::active()->findOrFail($userId);
-        $score = (float)Review::whereUserId($user->getKey())->published()->avg('score');
-        $score = (int)round($score);
+        $parameters = $request->validated();
 
-        $width = (int)($request->get('width') ?? 100);
-        $height = (int)($request->get('height') ?? 100);
-        $textColor = $request->get('text_color') ?? 'fff';
-        $backgroundColor = $request->get('background_color') ?? '000';
+        $score = (int)round(User::active()->findOrFail($userId)->getAvgScore());
+        $width = (int)($parameters['width'] ?? 100);
+        $height = (int)($parameters['height'] ?? 100);
+        $textColor = $parameters['text_color'] ?? 'fff';
+        $backgroundColor = $parameters['background_color'] ?? '000';
         $x = (int)floor($width / 2);
         $y = (int)floor($height / 2);
         $fontSize = (int)ceil(($width + $height) / 7.9);
@@ -38,6 +36,6 @@ class WidgetController extends Controller
             }
         );
 
-        return $img->response();
+        return $img->response('png', 100);
     }
 }
