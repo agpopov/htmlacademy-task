@@ -3,7 +3,7 @@
 
 use Tests\TestCase;
 
-class WidgetRequestTest extends TestCase
+class WidgetRequestValidationTest extends TestCase
 {
     public function test_width_validation_errors()
     {

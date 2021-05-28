@@ -1,0 +1,72 @@
+openapi: 3.0.0
+
+info:
+  title: User Widget
+  version: 1.0.0
+
+servers:
+  - url: http://htmlacademy.local
+
+paths:
+
+  /api/widget/{userId}:
+    get:
+      summary: Получение виджета
+      description: Возвращает изображение со средним рейтингом опубликованных пользователем отзывов
+      parameters:
+        - in: path
+          name: userId
+          description: Идентификатор пользователя
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        - in: query
+          name: width
+          description: Ширина изображения
+          schema:
+            type: integer
+            default: 100
+            minimum: 100
+            maximum: 500
+            example: 200
+        - in: query
+          name: height
+          description: Высота изображения
+          schema:
+            type: integer
+            default: 100
+            minimum: 100
+            maximum: 500
+            example: 200
+        - in: query
+          name: text_color
+          description: Цвет текста
+          schema:
+            type: string
+            default: ffffff
+            format: hex
+            example: ff02b3
+        - in: query
+          name: background_color
+          description: Цвет фона изображения
+          schema:
+            type: string
+            default: 000000
+            format: hex
+            example: ff02b3
+      responses:
+        200:
+          description: OK
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        404:
+          description: Not Found
+        500:
+          description: Internal Server Error
+        422:
+          description: Unprocessable Entity

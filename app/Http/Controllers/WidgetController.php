@@ -8,34 +8,25 @@ use Intervention\Image\Facades\Image;
 
 class WidgetController extends Controller
 {
-
     public function __invoke(WidgetRequest $request, string $userId)
     {
-        $parameters = $request->validated();
+        $score = User::active()->findOrFail($userId)->getAvgScore();
 
-        $score = (int)round(User::active()->findOrFail($userId)->getAvgScore());
-        $width = (int)($parameters['width'] ?? 100);
-        $height = (int)($parameters['height'] ?? 100);
-        $textColor = $parameters['text_color'] ?? 'fff';
-        $backgroundColor = $parameters['background_color'] ?? '000';
-        $x = (int)floor($width / 2);
-        $y = (int)floor($height / 2);
-        $fontSize = (int)ceil(($width + $height) / 7.9);
-
-        $img = Image::canvas($width, $height, "#$backgroundColor");
-        $img->text(
-            "$score%",
-            $x,
-            $y,
-            function ($font) use ($fontSize, $textColor) {
+        $image = Image::canvas($request->width(), $request->height(), $request->backgroundColor());
+        $image->text(
+            (int)round($score) . '%',
+            (int)floor($request->width() / 2),
+            (int)floor($request->height() / 2),
+            function ($font) use ($request) {
                 $font->file(resource_path('fonts/arial.ttf'));
+                $fontSize = (int)ceil(($request->width() + $request->height()) / 7.9);
                 $font->size($fontSize);
-                $font->color("#$textColor");
+                $font->color($request->textColor());
                 $font->align('center');
                 $font->valign('center');
             }
         );
 
-        return $img->response('png', 100);
+        return $image->response('png', 100);
     }
 }
