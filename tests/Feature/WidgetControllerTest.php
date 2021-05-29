@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image;
+use Image;
 use Tests\TestCase;
 
 class WidgetControllerTest extends TestCase

@@ -1,5 +1,6 @@
 <?php
 
+namespace Tests\Unit;
 
 use App\Models\Review;
 use App\Models\User;

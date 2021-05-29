@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\WidgetRequest;
 use App\Models\User;
-use Intervention\Image\Facades\Image;
+use Image;
 
 class WidgetController extends Controller
 {
